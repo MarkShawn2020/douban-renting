@@ -17,6 +17,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/src/douban/s2_analysis/2022-03-02-zhufang_filter.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/src/douban/s3_analysis/2022-03-02-zhufang.csv">
           <value>
             <Attribute>
