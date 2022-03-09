@@ -1,8 +1,6 @@
-# douban rent house
+# scrape douban
 
-## scripts
-
-### get the latest rent topics of beijingzufang
+## get the latest rent topics of group "beijingzufang" via api
 
 ```shell
 apikey=0df993c66c0c636e29ecbb5344252a4a
