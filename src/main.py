@@ -1,3 +1,4 @@
+import os
 from argparse import ArgumentParser
 from datetime import datetime
 
@@ -8,6 +9,7 @@ from douban.s1_crawl.crawl_via_html import DoubanCrawlerViaHTML
 from douban.s2_analysis.main import analyze
 from douban.utils import get_filename, get_cur_date
 from gaode.client import GaodeClient
+from settings import DOUBAN_DIR
 
 GROUP_SEPARATOR = "|"
 
@@ -16,7 +18,7 @@ if __name__ == '__main__':
     """
     config
     """
-    loader = yaml.load(open("douban/config.yaml"), Loader=yaml.FullLoader)
+    loader = yaml.load(open(os.path.join(DOUBAN_DIR, "config.yaml")), Loader=yaml.FullLoader)
 
     """
     args
@@ -50,7 +52,8 @@ if __name__ == '__main__':
     """
     crawl
     """
-    dc = DoubanCrawlerViaHTML(write_engine=WriteEngine(args.output_type))
+    write_engine = WriteEngine(args.output_type)
+    dc = DoubanCrawlerViaHTML(write_engine=write_engine)
     for group in args.groups.split(GROUP_SEPARATOR):
         date = datetime.now().strftime("%Y-%m-%d")
         print(f"crawling group of <{group}>")
@@ -59,15 +62,16 @@ if __name__ == '__main__':
         """
         analyze
         """
-        analyze(
-            filename=get_filename(group, get_cur_date()),
-            city=args.city,
-            target_address=args.target_address,
-            max_duration=args.max_duration,
-            after_date=args.after_date,
-            include_only_from_personal=args.include_only_from_personal,
-            exclude_only_for_girls=args.exclude_only_for_girls,
-            exclude_unknown_price=args.exclude_unknown_price,
-            exclude_unknown_duration=args.exclude_unknown_duration,
+        if write_engine == WriteEngine.CSV:  # the analysis depends on dumped file
+            analyze(
+                filename=get_filename(group, get_cur_date()),
+                city=args.city,
+                target_address=args.target_address,
+                max_duration=args.max_duration,
+                after_date=args.after_date,
+                include_only_from_personal=args.include_only_from_personal,
+                exclude_only_for_girls=args.exclude_only_for_girls,
+                exclude_unknown_price=args.exclude_unknown_price,
+                exclude_unknown_duration=args.exclude_unknown_duration,
 
-        )
+            )
