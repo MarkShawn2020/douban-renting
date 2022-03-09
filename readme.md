@@ -70,7 +70,22 @@ python src/main.py -c 北京 -a 凤凰汇购物中心 -g "zhufang|beijingzufang"
 
 ### another way to run via configuring the `src/config.yaml`
 
-![img.png](.imgs/config_yaml.png)
+```yaml
+city: 北京
+target_address: 凤凰汇购物中心
+groups: zhufang|beijingzufang
+count: 5000
+max_duration: 30
+min_budget: 3000
+max_budget: 6000
+after_date: null
+enable_scrape: true
+enable_analysis: true
+exclude_only_for_girls: false
+include_only_from_personal: false
+exclude_unknown_duration: false
+exclude_unknown_price: false
+```
 
 Then running just via: 
 
