@@ -91,7 +91,7 @@ class DoubanCrawlerViaAPI(DoubanCrawlerBase):
         res = self._s.get(url)
         return res.json()
 
-    def crawl_topics_of_group_in_latest_days(self, group: str, days: int = 10, limit: int = 100):
+    def crawl_topics_of_group(self, group: str, days: int = 10, limit: int = 100):
         """
         爬取近N（默认10）天的小组讨论，因为豆瓣帖子是按照更新顺序排列的，此外，超过一定天数的帖子对实际租房没太大意义（研究除外）
 
@@ -123,4 +123,4 @@ class DoubanCrawlerViaAPI(DoubanCrawlerBase):
 if __name__ == '__main__':
     group_id = 'beijingzufang'
     dc = DoubanCrawlerViaAPI(API_KEY)
-    dc.crawl_topics_of_group_in_latest_days(group_id, 1, CRAWL_MAX_LIMIT)
+    dc.crawl_topics_of_group(group_id, 1, CRAWL_MAX_LIMIT)

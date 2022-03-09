@@ -17,6 +17,34 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/src/douban/data/2022-03-09-beijingzufang_filter.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/src/douban/data/2022-03-09-beijingzufang_凤凰汇购物中心.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/src/douban/s1_crawl/data/2022-03-09-beijingzufang.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/src/douban/s1_crawl/data/2022-03-09-zhufang.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/src/douban/s2_analysis/2022-03-02-zhufang_filter.csv">
           <value>
             <Attribute>

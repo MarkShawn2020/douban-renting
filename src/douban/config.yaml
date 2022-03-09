@@ -1,0 +1,12 @@
+city: 北京
+target_address: 源创空间大厦
+groups: zhufang|beijingzufang
+count: 5000
+max_duration: 30
+min_budget: 3000
+max_budget: 6000
+exclude_only_for_girls: false
+include_only_from_personal: true
+exclude_unknown_duration: true
+exclude_unknown_price: true
+after_date: null

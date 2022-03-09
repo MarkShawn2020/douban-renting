@@ -5,10 +5,12 @@ from datetime import datetime, timedelta
 from typing import TypedDict
 from pprint import pprint
 
-from src.douban.s1_crawl.crawl_base import DoubanCrawlerBase, WriteEngine
+from douban.s1_crawl.crawl_base import DoubanCrawlerBase, WriteEngine
 from bs4 import BeautifulSoup
 
 import csv
+
+from douban.utils import get_cur_date
 
 
 class Topic(TypedDict):
@@ -50,7 +52,7 @@ class DoubanCrawlerViaHTML(DoubanCrawlerBase):
             response_count = int(row.select_one("td:nth-of-type(3)").text or 0)
 
             datetime_str = row.select_one("td:nth-of-type(4)").text
-            if not re.match("20", datetime_str):  # test if it's year of 20XX
+            if not re.match("20", datetime_str):  # test if it'_s year of 20XX
                 datetime_str = f"{datetime.now().year}-{datetime_str}"
             response_latest_time = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
 
@@ -58,12 +60,12 @@ class DoubanCrawlerViaHTML(DoubanCrawlerBase):
                         author_name=author_name, response_count=response_count,
                         response_latest_time=response_latest_time)
 
-    def crawl_topics_of_group_in_latest_days(self, group: str, days: int = 10):
+    def crawl_topics_of_group(self, group: str, count: int = 10):
 
         if self.write_engine == WriteEngine.CSV:
-            self.write_filename += "-" + group + ".csv"
+            write_filename = get_cur_date() + "-" + group + ".csv"
             csv_writer = csv.writer(
-                open(os.path.join(self.data_dir, self.write_filename), "w", encoding="utf-8")
+                open(os.path.join(self.data_dir, write_filename), "w", encoding="utf-8")
             )
             csv_writer.writerow(TopicColumns)
 
@@ -79,21 +81,20 @@ class DoubanCrawlerViaHTML(DoubanCrawlerBase):
                 # else:
                 if self.write_engine == WriteEngine.CSV:
                     csv_writer.writerow(list(item[x] for x in TopicColumns))
-
-                    print(item)
                 elif self.write_engine == WriteEngine.STDOUT:
                     print(item)
                 else:
                     raise Exception("NOT SUPPORT NOW")
-            start += limit
-            print("----------------")
 
-            if start > days * 1000:
-                finished_reason = "finished collecting specific amount"
-            else:
-                time.sleep(1)
+                start += 1
+                if start >= count:
+                    finished_reason = f"finished collecting {count} items"
+                    break
+
+            time.sleep(1)
 
         print(finished_reason)
+        print("----------------")
 
 
 if __name__ == '__main__':
@@ -101,4 +102,4 @@ if __name__ == '__main__':
     group = 'zhufang'  # 北京无中介租房
     dc = DoubanCrawlerViaHTML(write_engine=WriteEngine.CSV)
     # dc._get_topics_of_group(group)
-    dc.crawl_topics_of_group_in_latest_days(group, 10)
+    dc.crawl_topics_of_group(group, 10)
