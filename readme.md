@@ -1,5 +1,45 @@
 # 全网可能最智能的豆瓣小组租房筛选系统
 
+## project structure
+
+```text
+.
+├── VERSION.txt
+├── auto_git_version.sh
+├── readme.md
+├── requirements.txt
+└── src
+    ├── config.yaml
+    ├── douban
+    │   ├── data
+    │   │   ├── 2022-03-09-beijingzufang.csv
+    │   │   ├── 2022-03-09-beijingzufang_凤凰汇购物中心.csv
+    │   │   ├── 2022-03-09-zhufang.csv
+    │   │   └── 2022-03-09-zhufang_凤凰汇购物中心.csv
+    │   ├── readme.md
+    │   ├── s1_crawl
+    │   │   ├── crawl_base.py
+    │   │   ├── crawl_via_api.py
+    │   │   ├── crawl_via_html.py
+    │   │   ├── db.py
+    │   │   ├── errors.py
+    │   │   └── settings.py
+    │   ├── s2_analysis
+    │   │   └── main.py
+    │   ├── settings.py
+    │   └── utils.py
+    ├── gaode
+    │   ├── base.py
+    │   ├── client.py
+    │   └── globals
+    │       ├── addr2coords.json
+    │       ├── coords2name.json
+    │       └── coordspair2duration.json
+    ├── main.py
+    └── settings.py
+
+```
+
 ## init
 
 ### environment variables
