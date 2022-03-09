@@ -16,13 +16,13 @@
     │   │   ├── 2022-03-09-beijingzufang_凤凰汇购物中心.csv
     │   │   ├── 2022-03-09-zhufang.csv
     │   │   └── 2022-03-09-zhufang_凤凰汇购物中心.csv
-    │   ├── readme.md
     │   ├── s1_crawl
     │   │   ├── crawl_base.py
     │   │   ├── crawl_via_api.py
     │   │   ├── crawl_via_html.py
     │   │   ├── db.py
     │   │   ├── errors.py
+    │   │   ├── readme.md
     │   │   └── settings.py
     │   ├── s2_analysis
     │   │   └── main.py
