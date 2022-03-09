@@ -9,7 +9,7 @@ from douban.s1_crawl.crawl_via_html import DoubanCrawlerViaHTML
 from douban.s2_analysis.main import analyze
 from douban.utils import get_filename, get_cur_date
 from gaode.client import GaodeClient
-from settings import DOUBAN_DIR
+from settings import SRC_DIR
 
 GROUP_SEPARATOR = "|"
 
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     """
     config
     """
-    loader = yaml.load(open(os.path.join(DOUBAN_DIR, "config.yaml")), Loader=yaml.FullLoader)
+    loader = yaml.load(open(os.path.join(SRC_DIR, "config.yaml")), Loader=yaml.FullLoader)
 
     """
     args
