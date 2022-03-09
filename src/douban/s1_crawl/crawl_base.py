@@ -23,7 +23,7 @@ class DoubanCrawlerBase:
         print("init douban crawler")
 
         self.write_engine = write_engine
-        print("write_engine: " + self.write_engine.value)
+        print("write engine: " + self.write_engine.value)
 
         self.data_dir = DOUBAN_DATA_DIR
         print("write output directory: " + self.data_dir)

@@ -37,7 +37,6 @@
     │       └── coordspair2duration.json
     ├── main.py
     └── settings.py
-
 ```
 
 ## init
@@ -77,4 +76,16 @@ Then running just via:
 
 ```shell
 python src/main.py
+```
+
+### scrape but not analyze
+
+```shell
+python src/main.py --no-enable_analysis
+```
+
+### not scrape but analyze
+
+```shell
+python src/main.py --no-enable_scrape
 ```

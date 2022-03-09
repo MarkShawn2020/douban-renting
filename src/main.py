@@ -1,5 +1,5 @@
 import os
-from argparse import ArgumentParser
+from argparse import ArgumentParser, BooleanOptionalAction
 from datetime import datetime
 
 import yaml
@@ -39,6 +39,8 @@ if __name__ == '__main__':
                         default=loader["exclude_only_for_girls"])
     parser.add_argument("--exclude_unknown_duration", default=loader['exclude_unknown_duration'])
     parser.add_argument("--exclude_unknown_price", default=loader['exclude_unknown_price'])
+    parser.add_argument("--enable_scrape", default=loader["enable_scrape"], action=BooleanOptionalAction)
+    parser.add_argument("--enable_analysis", default=loader["enable_analysis"], action=BooleanOptionalAction)
 
     args = parser.parse_args()
     print(args)
@@ -49,22 +51,26 @@ if __name__ == '__main__':
     print("target coordinates: " + gaode.target_coordinates)
     gaode.dump_dict()
 
-    """
-    crawl
-    """
     write_engine = WriteEngine(args.output_type)
     dc = DoubanCrawlerViaHTML(write_engine=write_engine)
     for group in args.groups.split(GROUP_SEPARATOR):
         date = datetime.now().strftime("%Y-%m-%d")
-        print(f"crawling group of <{group}>")
-        dc.crawl_topics_of_group(group, count=int(args.count))
+
+        """
+        crawl
+        """
+        if args.enable_scrape:
+            print(f"scraping group: {group}")
+            dc.crawl_topics_of_group(group, count=int(args.count))
 
         """
         analyze
         """
-        if write_engine == WriteEngine.CSV:  # the analysis depends on dumped file
+        if args.enable_analysis:
+            filename = get_filename(group, get_cur_date())
+            print("analyzing file: " + filename)
             analyze(
-                filename=get_filename(group, get_cur_date()),
+                filename=filename,
                 city=args.city,
                 target_address=args.target_address,
                 max_duration=args.max_duration,
