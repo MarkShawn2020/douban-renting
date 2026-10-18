@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>豆瓣租房助手宣传图</title>
+<style>
+  :root {
+    --background: #F9F9F7;
+    --card: #FFFFFF;
+    --foreground: #181818;
+    --muted-foreground: #737373;
+    --primary: #CC785C;
+    --border: #E8E6DC;
+    --link: #3377AA;
+    --ok: #4F7A4A;
+    --like: #FBF1EC;
+    --contacted: #F5F0E1;
+    --visited: #EEF2E6;
+    --font-serif: "Songti SC", "Noto Serif SC", Georgia, serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--background); color: var(--foreground); font-family: var(--font-sans);
+    overflow: hidden; position: relative;
+  }
+  .text { position: absolute; display: flex; flex-direction: column; }
+  .icon { display: block; border-radius: 22%; }
+  h1 { font-family: var(--font-serif); font-weight: 700; margin: 0; letter-spacing: .02em; line-height: 1.15; }
+  .sub { color: var(--muted-foreground); margin: 0; line-height: 1.55; }
+  .chips { display: flex; flex-wrap: wrap; }
+  .chips span { border: 1px solid var(--border); background: var(--card); border-radius: 999px; white-space: nowrap; }
+  /* logo.svg 四周自带约 20% 留白，定位时按留白回退，让图形与文字左缘对齐 */
+  .brand { position: absolute; display: block; }
+
+  /* 列表行：沿用插件在豆瓣讨论列表里的行样式 */
+  .rows { position: absolute; background: var(--card); border: 1px solid var(--border); overflow: hidden; }
+  .row { border-bottom: 1px dashed var(--border); }
+  .row:last-child { border-bottom: 0; }
+  .row .t { color: var(--link); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .line { display: flex; align-items: center; color: var(--muted-foreground); }
+  .row .price { color: var(--foreground); font-weight: 600; }
+  .row .ok { color: var(--ok); font-weight: 600; }
+  .row .badge { background: var(--primary); color: #fff; border-radius: 9px; }
+  .row.like { background: var(--like); }
+  .row.contacted { background: var(--contacted); }
+  .row.visited { background: var(--visited); }
+
+  .shot { position: absolute; border: 1px solid var(--border); background: var(--card); overflow: hidden; }
+  .shot img { display: block; }
+
+  /* 440x280 */
+  .small .text { left: 26px; top: 26px; width: 215px; }
+  .small .icon { width: 44px; height: 44px; margin-bottom: 16px; }
+  .small h1 { font-size: 30px; }
+  .small .sub { font-size: 13px; margin-top: 8px; }
+  .small .brand { left: 7px; bottom: 18px; height: 34px; }
+  .small .rows { left: 252px; top: 34px; width: 230px; border-radius: 12px; box-shadow: 0 8px 24px rgba(24,24,24,.08); }
+  .small .row { padding: 9px 12px 8px; }
+  .small .row .t { font-size: 12px; line-height: 17px; }
+  .small .row .line { gap: 7px; margin-top: 3px; font-size: 11px; line-height: 16px; }
+  .small .row .badge { font-size: 10px; line-height: 15px; padding: 0 6px; }
+  .small .chips, .small .shot { display: none; }
+
+  /* 1400x560 */
+  .marquee .text { left: 96px; top: 92px; width: 480px; }
+  .marquee .icon { width: 72px; height: 72px; margin-bottom: 30px; }
+  .marquee h1 { font-size: 64px; }
+  .marquee .sub { font-size: 22px; margin-top: 18px; }
+  .marquee .chips { gap: 10px; margin-top: 26px; }
+  .marquee .chips span { font-size: 16px; padding: 6px 16px; }
+  .marquee .brand { left: 65px; bottom: 49px; height: 56px; }
+  .marquee .shot { left: 640px; top: 64px; width: 700px; height: 560px; border-radius: 16px; box-shadow: 0 16px 48px rgba(24,24,24,.10); }
+  .marquee .shot img { width: 1195px; margin: -112px 0 0 -37px; }
+  .marquee .rows { display: none; }
+</style>
+</head>
+<body>
+  <div class="text">
+    <img class="icon" src="../../assets/logo.png" alt="">
+    <h1>豆瓣租房助手</h1>
+    <p class="sub">在豆瓣租房小组里筛选、标记帖子，<br>按到公司的公交通勤时间找房。</p>
+    <div class="chips"><span>价格与关键词筛选</span><span>通勤时间</span><span>看房标记与备注</span></div>
+  </div>
+  <img class="brand" src="../../extension/options/logo.svg" alt="手工川">
+
+  <!-- 小图里的三行取自真实截图的通勤与标记结果 -->
+  <div class="rows">
+    <div class="row like"><div class="t">东直门南向一居室房主直租</div>
+      <div class="line"><span class="ok">公交 26 分钟</span><span class="badge">收藏</span></div></div>
+    <div class="row"><div class="t">无中介费！地铁口、电梯房、三家合租</div>
+      <div class="line"><span class="price">¥2600</span><span class="ok">公交 40 分钟</span></div></div>
+    <div class="row contacted"><div class="t">三元桥 三源里北小街主卧和次卧出租</div>
+      <div class="line"><span class="ok">公交 26 分钟</span><span class="badge">已联系</span></div></div>
+    <div class="row visited"><div class="t">呼家楼地铁 向军南里两居精装平房</div>
+      <div class="line"><span class="ok">公交 22 分钟</span><span class="badge">已看房</span></div></div>
+  </div>
+
+  <div class="shot"><img src="screenshots/01-filter-panel.png" alt=""></div>
+
+<script>
+  const size = new URLSearchParams(location.search).get("size") || "440x280";
+  document.body.className = size === "1400x560" ? "marquee" : "small";
+</script>
+</body>
+</html>

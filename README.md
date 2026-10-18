@@ -32,7 +32,9 @@ Edge、Arc 等 Chromium 内核浏览器同样适用。
 
 ## 隐私
 
-标记、已读记录和高德 Key 只保存在本机浏览器，插件不收集、不上传任何数据。开启通勤功能后，帖子标题与坐标只会发送给高德接口。
+标记、已读记录和高德 Key 只保存在本机浏览器，插件不收集、不上传任何数据。开启通勤功能后，帖子标题、城市、工作地点及其坐标只会发送给高德接口，用于计算通勤时间。完整说明见[隐私政策](https://github.com/MarkShawn2020/douban-renting/blob/main/docs/store/privacy-policy.md)。
+
+本插件对用户数据的使用遵守 Chrome 应用商店用户数据政策（Chrome Web Store User Data Policy），包括其中的有限使用（Limited Use）要求。
 
 ## 开发
 
@@ -48,6 +50,8 @@ python3 tests/extension/e2e.py [截图目录]
 ```shell
 cd extension && zip -r ../chrome-douban-renting-v$(jq -r .version manifest.json).zip . -x '.*'
 ```
+
+Chrome Web Store 上架素材、文案与提交步骤在 [`docs/store/`](docs/store/listing.md)，`python3 docs/store/render.py` 重新渲染截图和宣传图。
 
 ---
 
