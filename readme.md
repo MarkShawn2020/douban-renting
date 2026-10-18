@@ -45,14 +45,13 @@
 
 为安全考虑，以下变量需要需写入环境变量，再经由程序读取。
 
-1. `GAODE_KEY`: 高德key
-2. `DOUBAN_COOKIE`: 豆瓣已登录后的网页cookie
+1. `GAODE_KEY`（或 `GAODE_WEB_SERVICE_API_KEY`）: 高德 Web 服务 key
+2. `DOUBAN_COOKIE`（可选）: 豆瓣已登录后的网页 cookie。小组讨论列表目前匿名可访问，但匿名只能翻到第 400 条左右
 
 ### python environment
 
 ```shell
-# a python virtualenv is strongly suggested or directly install the requirements
-pip install -r requirements.txt
+uv sync
 ```
 
 ## usage sample
@@ -65,7 +64,7 @@ pip install -r requirements.txt
 # `-g` means `groups`, which are joined id list of douban groups by separator `|`
 # `-o` means `output_format`, use `-o CSV` for write into csv and for later analysis
 # `-n` means `count`, it means how many items you wanna scrape for each group, 5000 is a suitable amount
-python src/main.py -c 北京 -a 凤凰汇购物中心 -g "zhufang|beijingzufang" -o CSV -n 50
+uv run python src/main.py -c 北京 -a 凤凰汇购物中心 -g "zhufang|beijingzufang" -o CSV -n 50
 ```
 
 ### another way to run via configuring the `src/config.yaml`
@@ -104,3 +103,25 @@ python src/main.py --no-enable_analysis
 ```shell
 python src/main.py --no-enable_scrape
 ```
+
+## web service
+
+线上地址：https://douban.lovstudio.ai
+
+Web 服务在本机运行，后台每 30 分钟增量抓取 `config.yaml` 中的小组（每组前 4 页），用高德 POI 搜索定位帖子标题；
+访客输入工作地点后，按直线距离取最近的一批计算公交通勤并缓存。运行数据（SQLite、高德缓存）在 `var/`。
+
+为保护个人高德 key：每日调用上限 `GAODE_DAILY_BUDGET`（默认 3000），每次查询最多新算 25 条通勤，带地址的查询按 IP 限流。
+
+```shell
+# 本地前台运行
+zsh deploy/serve.sh   # http://127.0.0.1:8765
+```
+
+### deploy (launchd + Cloudflare Tunnel)
+
+- `deploy/ai.lovstudio.douban-renting.plist`：常驻 Web 服务，复制到 `~/Library/LaunchAgents/` 后 `launchctl bootstrap gui/$(id -u) <plist>`
+- `deploy/ai.lovstudio.cloudflared.douban.plist` + `deploy/cloudflared.yml`：隧道 `douban-renting` 将 `douban.lovstudio.ai` 回源到 `127.0.0.1:8765`；
+  配置放在 `~/.cloudflared/douban-renting.yml`，凭据为同目录下的隧道 JSON
+- 更新代码后重启：`launchctl kickstart -k gui/$(id -u)/ai.lovstudio.douban-renting`
+- 日志：`~/Library/Logs/douban-renting.log`、`~/Library/Logs/cloudflared-douban.log`

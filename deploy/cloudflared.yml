@@ -1,0 +1,10 @@
+# douban.lovstudio.ai 公网入口：TLS 由 Cloudflare 边缘终止，回源到本机 uvicorn(:8765)
+tunnel: f60e2d52-7d43-4fea-bfa5-9de518a940bc
+credentials-file: /Users/mark/.cloudflared/f60e2d52-7d43-4fea-bfa5-9de518a940bc.json
+
+ingress:
+  - hostname: douban.lovstudio.ai
+    service: http://127.0.0.1:8765
+    originRequest:
+      connectTimeout: 30s
+  - service: http_status:404

@@ -277,3 +277,6 @@ fabric.properties
 # add file of  in case for REDUNDANT changes being detected by IDE
 
 
+
+### runtime data (sqlite, gaode cache)
+var/

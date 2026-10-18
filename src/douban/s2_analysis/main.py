@@ -1,9 +1,8 @@
-import logging
 import os
-import re
 
 import pandas as pd
 
+from douban.s2_analysis.rules import parse_price, is_seeking, is_from_personal, is_only_for_girls
 from douban.settings import DOUBAN_DATA_DIR
 from douban.utils import get_filename, get_cur_date
 from gaode.client import GaodeClient
@@ -28,14 +27,6 @@ def analyze(filename: str, city: str, target_address: str, max_duration: int,
     # convert response_latest_time format into datetime
     df.response_latest_time = pd.to_datetime(df.response_latest_time)
 
-    def parse_price(s):
-        nums = re.findall(r"\d+", s)
-        nums = [int(i) for i in nums if len(i) == 4]
-        if nums:
-            if len(nums) > 1:
-                logging.warning(f"should only one price parsed from title, while there are {len(nums)}: {nums}")
-            return sum(nums) / len(nums)
-
     df["possible_price"] = df.post_title.apply(parse_price)
 
     # filter price
@@ -53,30 +44,24 @@ def analyze(filename: str, city: str, target_address: str, max_duration: int,
         df = df.query(f"'{after_date}' < response_latest_time")
 
     print("exclude those are asking for rent")
-    df = df.query("~post_title.str.contains('求')")
+    df = df[~df.post_title.apply(is_seeking)]
 
     if include_only_from_personal:
         print("only include those are from personal")
-        df = df[df.post_title.apply(lambda s: "个人" in s or "直租" in s or "转租" in s)]
+        df = df[df.post_title.apply(is_from_personal)]
 
     # filter personal
     if exclude_only_for_girls:
         print(f"exclude only-for-girls")
-        df = df.query("~post_title.str.contains('女生') and ~post_title.str.contains('限女')")
+        df = df[~df.post_title.apply(is_only_for_girls)]
 
-    # get coords from title
+    # locate title via poi search
     try:
-        print("getting coords from title")
+        print("locating title via poi search")
         df = df.copy()
-        df['addr_coords'] = df["post_title"].apply(gaode.get_coords_from_addr)
-    finally:
-        gaode.dump_dict()
-
-    # get addr from coords
-    try:
-        print("getting addr name from coords")
-        df = df.copy()
-        df["addr_name"] = df["addr_coords"].apply(gaode.get_addr_name_from_coords)
+        pois = df["post_title"].apply(lambda t: gaode.search_poi(t, city) or {})
+        df['addr_coords'] = pois.apply(lambda p: p.get("location"))
+        df["addr_name"] = pois.apply(lambda p: " ".join(filter(None, [p.get("adname"), p.get("name")])) or None)
     finally:
         gaode.dump_dict()
 
@@ -85,7 +70,9 @@ def analyze(filename: str, city: str, target_address: str, max_duration: int,
     try:
         df = df.copy()
         df["transit_minutes"] = df["addr_coords"].apply(
-            lambda x: gaode.calc_transit_duration_from_coords(x))
+            lambda x: gaode.calc_transit_duration_from_coords(x if isinstance(x, str) else None))
+        # 公交与步行都无方案时返回 -1，视为未知
+        df.loc[df["transit_minutes"] < 0, "transit_minutes"] = None
     finally:
         gaode.dump_dict()
 

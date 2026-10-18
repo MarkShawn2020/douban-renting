@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>豆瓣租房通勤筛选</title>
+<meta name="description" content="把豆瓣租房小组的帖子，按到你工作地点的公交通勤时间排序。">
+<link rel="icon" href="logo.svg">
+<style>
+  :root {
+    --background: #F9F9F7;
+    --card: #FFFFFF;
+    --muted: #F0EEE6;
+    --foreground: #181818;
+    --muted-foreground: #737373;
+    --primary: #CC785C;
+    --primary-hover: #B8664B;
+    --primary-foreground: #FFFFFF;
+    --border: #E8E6DC;
+    --danger: #B4483A;
+    --font-serif: Georgia, "Songti SC", "Noto Serif SC", serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Inter, Arial, sans-serif;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font: 15px/1.6 var(--font-sans);
+  }
+  a { color: inherit; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+  header.site { padding: 20px 0 8px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  header.site img { height: 40px; width: auto; display: block; }
+  header.site .tag { font-size: 13px; color: var(--muted-foreground); }
+
+  .hero { padding: 28px 0 20px; }
+  .hero h1 { font: 600 34px/1.25 var(--font-serif); margin: 0 0 10px; letter-spacing: 0.01em; }
+  .hero p { margin: 0; color: var(--muted-foreground); max-width: 36em; }
+  .hero .fresh { margin-top: 10px; font-size: 13px; }
+
+  form.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .field.wide { grid-column: span 2; }
+  label.lbl { font-size: 13px; color: var(--muted-foreground); }
+  input[type=text], input[type=number], select {
+    font: inherit; color: var(--foreground); background: var(--background);
+    border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; width: 100%; min-width: 0;
+  }
+  input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: -1px; }
+  .price { display: flex; align-items: center; gap: 6px; }
+  .price span { color: var(--muted-foreground); }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; font-size: 14px; }
+  .checks label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .checks input { accent-color: var(--primary); width: 16px; height: 16px; }
+  .actions { display: flex; align-items: center; gap: 14px; margin-top: 18px; flex-wrap: wrap; }
+  button.primary {
+    font: 600 15px var(--font-sans); color: var(--primary-foreground); background: var(--primary);
+    border: 0; border-radius: 10px; padding: 10px 22px; cursor: pointer;
+  }
+  button.primary:hover { background: var(--primary-hover); }
+  button.primary:disabled { opacity: .6; cursor: progress; }
+  button.ghost {
+    font: inherit; font-size: 14px; color: var(--primary); background: transparent;
+    border: 1px solid var(--primary); border-radius: 10px; padding: 7px 14px; cursor: pointer;
+  }
+  .hint { font-size: 13px; color: var(--muted-foreground); }
+
+  .summary { margin: 28px 0 12px; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+  .summary h2 { font: 600 22px/1.3 var(--font-serif); margin: 0; }
+  .summary .sub { font-size: 13px; color: var(--muted-foreground); }
+  .error { margin-top: 20px; padding: 12px 16px; border-radius: 12px; background: var(--muted); color: var(--danger); }
+
+  ol.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; gap: 14px; }
+  .item .mins { flex: none; width: 64px; text-align: center; border-right: 1px solid var(--border); padding-right: 12px; }
+  .item .mins b { display: block; font: 600 24px/1.1 var(--font-serif); color: var(--primary); }
+  .item .mins small { font-size: 12px; color: var(--muted-foreground); }
+  .item .body { min-width: 0; flex: 1; }
+  .item a.title { font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+  .item a.title:hover { color: var(--primary); text-decoration: underline; }
+  .meta { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--muted-foreground); }
+  .meta .price-tag { color: var(--foreground); font-weight: 600; }
+  .more { margin-top: 28px; }
+  .more h3 { font: 600 18px var(--font-serif); margin: 0 0 4px; }
+  .more p { margin: 0 0 12px; }
+
+  footer { margin: 48px 0 32px; padding-top: 18px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted-foreground); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+  footer p { margin: 0; max-width: 40em; }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 26px; }
+    header.site img { height: 34px; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .field.wide { grid-column: span 2; }
+    .item { gap: 10px; padding: 12px; }
+    .item .mins { width: 52px; padding-right: 10px; }
+    .item .mins b { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <a href="https://lovstudio.ai" aria-label="手工川"><img src="logo.svg" alt="手工川"></a>
+    <span class="tag">Lovstudio.AI 小工具</span>
+  </header>
+
+  <section class="hero">
+    <h1>豆瓣租房通勤筛选</h1>
+    <p>汇总豆瓣租房小组的最新帖子，按到你工作地点的公交通勤时间排序。先在这里粗筛，再去豆瓣原帖细看、约看房。</p>
+    <p class="fresh hint" id="fresh"></p>
+  </section>
+
+  <form class="card" id="form" autocomplete="off">
+    <div class="grid">
+      <div class="field wide">
+        <label class="lbl" for="address">工作地点</label>
+        <input type="text" id="address" name="address" maxlength="60" placeholder="如：国贸、望京SOHO、西二旗地铁站">
+      </div>
+      <div class="field">
+        <label class="lbl" for="max_minutes">通勤上限</label>
+        <select id="max_minutes" name="max_minutes">
+          <option value="20">20 分钟</option>
+          <option value="30">30 分钟</option>
+          <option value="45" selected>45 分钟</option>
+          <option value="60">60 分钟</option>
+          <option value="90">90 分钟</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl" for="days">发帖时间</label>
+        <select id="days" name="days">
+          <option value="1">近 1 天</option>
+          <option value="3">近 3 天</option>
+          <option value="7" selected>近 7 天</option>
+          <option value="14">近 14 天</option>
+          <option value="30">近 30 天</option>
+        </select>
+      </div>
+      <div class="field wide">
+        <label class="lbl" for="min_price">月租（元）</label>
+        <div class="price">
+          <input type="number" id="min_price" name="min_price" min="0" step="100" placeholder="不限">
+          <span>至</span>
+          <input type="number" id="max_price" name="max_price" min="0" step="100" placeholder="不限">
+        </div>
+      </div>
+    </div>
+    <div class="checks">
+      <label><input type="checkbox" name="personal_only"> 只看个人直租 / 转租</label>
+      <label><input type="checkbox" name="exclude_girls_only"> 排除限女生</label>
+      <label><input type="checkbox" name="exclude_unknown_price"> 排除未标价格</label>
+    </div>
+    <div class="actions">
+      <button class="primary" type="submit" id="submit">开始筛选</button>
+      <span class="hint" id="status">不填工作地点时，按最新回复时间列出房源。</span>
+    </div>
+  </form>
+
+  <div id="error" class="error" hidden></div>
+
+  <section id="results" hidden>
+    <div class="summary">
+      <h2 id="summary-title"></h2>
+      <span class="sub" id="summary-sub"></span>
+    </div>
+    <ol class="list" id="list"></ol>
+    <div class="more" id="more" hidden>
+      <h3>附近还有未计算通勤的房源</h3>
+      <p class="hint" id="more-hint"></p>
+      <ol class="list" id="more-list"></ol>
+    </div>
+  </section>
+
+  <footer>
+    <p>数据来自豆瓣租房小组的公开帖子，每 30 分钟更新，保留近 30 天；价格与位置从标题自动识别，通勤时间由高德公交规划估算，均可能有误，请以原帖和实地为准。</p>
+    <span>Lovstudio.AI · 手工川</span>
+  </footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const form = $("form");
+const FIELDS = ["address", "max_minutes", "days", "min_price", "max_price"];
+const CHECKS = ["personal_only", "exclude_girls_only", "exclude_unknown_price"];
+
+function el(tag, props = {}, children = []) {
+  const node = document.createElement(tag);
+  Object.assign(node, props);
+  for (const c of children) node.append(c);
+  return node;
+}
+
+function relTime(iso) {
+  const diff = (Date.now() - new Date(iso).getTime()) / 60000;
+  if (diff < 60) return `${Math.max(1, Math.round(diff))} 分钟前`;
+  if (diff < 1440) return `${Math.round(diff / 60)} 小时前`;
+  return `${Math.round(diff / 1440)} 天前`;
+}
+
+function renderItem(item, showMinutes) {
+  const meta = el("div", { className: "meta" });
+  if (item.price) meta.append(el("span", { className: "price-tag", textContent: `约 ¥${Math.round(item.price)}` }));
+  if (item.place) meta.append(el("span", { textContent: `定位：${item.place}` }));
+  if (item.distance_km != null) meta.append(el("span", { textContent: `直线 ${item.distance_km} km` }));
+  meta.append(el("span", { textContent: `${relTime(item.last_reply_at)}回复` }));
+  meta.append(el("span", { textContent: item.group }));
+
+  const body = el("div", { className: "body" }, [
+    el("a", { className: "title", href: item.url, target: "_blank", rel: "noopener noreferrer", textContent: item.title }),
+    meta,
+  ]);
+  const li = el("li", { className: "item" });
+  if (showMinutes) {
+    li.append(el("div", { className: "mins" }, [
+      el("b", { textContent: item.minutes }),
+      el("small", { textContent: "分钟" }),
+    ]));
+  }
+  li.append(body);
+  return li;
+}
+
+function readForm() {
+  const params = new URLSearchParams();
+  for (const name of FIELDS) {
+    const v = form.elements[name].value.trim();
+    if (v) params.set(name, v);
+  }
+  for (const name of CHECKS) if (form.elements[name].checked) params.set(name, "true");
+  return params;
+}
+
+function fillForm(params) {
+  for (const name of FIELDS) if (params.has(name)) form.elements[name].value = params.get(name);
+  for (const name of CHECKS) form.elements[name].checked = params.get(name) === "true";
+}
+
+async function loadHealth() {
+  try {
+    const h = await (await fetch("api/health")).json();
+    const groups = h.groups.map((g) => g.label).join("、");
+    const at = h.last_crawl_at ? `最近更新 ${relTime(h.last_crawl_at)}` : "首次抓取进行中";
+    $("fresh").textContent = `${h.city} · ${groups} · 已收录 ${h.topics} 条帖子 · ${at}`;
+  } catch (e) { /* 状态行可缺省 */ }
+}
+
+async function search(params, pushState) {
+  const btn = $("submit");
+  btn.disabled = true;
+  $("error").hidden = true;
+  $("status").textContent = params.get("address") ? "正在计算通勤时间，首次查询某个地点可能需要十几秒……" : "加载中……";
+  if (pushState) history.replaceState(null, "", params.toString() ? `?${params}` : location.pathname);
+  try {
+    const res = await fetch(`api/search?${params}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail && typeof data.detail === "string" ? data.detail : "查询失败，请稍后再试");
+    render(data, params);
+    $("status").textContent = "";
+  } catch (e) {
+    $("error").textContent = e.message;
+    $("error").hidden = false;
+    $("results").hidden = true;
+    $("status").textContent = "";
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function render(data, params) {
+  const list = $("list");
+  const moreList = $("more-list");
+  list.replaceChildren();
+  moreList.replaceChildren();
+  const withTarget = !!data.target;
+
+  if (withTarget) {
+    const t = data.target;
+    $("summary-title").textContent = `${data.items.length} 套房源 ${params.get("max_minutes") || 45} 分钟内可达`;
+    $("summary-sub").textContent = `目标：${t.name}${t.district ? `（${t.district}）` : ""} · 条件内共 ${data.stats.matched} 条帖子，${data.stats.nearby} 条在附近`;
+  } else {
+    $("summary-title").textContent = "最新房源";
+    $("summary-sub").textContent = `条件内共 ${data.stats.matched} 条帖子，显示最近 ${data.items.length} 条`;
+  }
+
+  if (!data.items.length) {
+    list.append(el("li", { className: "hint", textContent: withTarget ? "暂时没有符合条件的房源，可以放宽通勤上限或发帖时间。" : "暂时没有数据，首次抓取完成后会出现在这里。" }));
+  }
+  for (const item of data.items) list.append(renderItem(item, withTarget));
+
+  const more = data.nearby_uncomputed || [];
+  $("more").hidden = !more.length;
+  if (more.length) {
+    $("more-hint").textContent = "为节省地图接口额度，每次查询只计算最近的一批。下面按直线距离排列，可以再算一批。";
+    const again = el("button", { className: "ghost", type: "button", textContent: "再算一批" });
+    again.addEventListener("click", () => search(readForm(), false));
+    $("more-hint").append(" ", again);
+    for (const item of more) moreList.append(renderItem(item, false));
+  }
+  $("results").hidden = false;
+}
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  search(readForm(), true);
+});
+
+const initial = new URLSearchParams(location.search);
+fillForm(initial);
+loadHealth();
+search(readForm(), false);
+</script>
+</body>
+</html>

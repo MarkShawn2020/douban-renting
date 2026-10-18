@@ -36,7 +36,7 @@ class DoubanCrawlerViaHTML(DoubanCrawlerBase):
         """
         url = f'https://www.douban.com/group/{group}/discussion?start={start}&limit={limit}&type=new'
         print(f"FETCHING: {url}")
-        res = self._s.get(url)
+        res = self._s.get(url, timeout=20)
         soup = BeautifulSoup(res.text, features="html.parser")
         rows = soup.select("#content .article tr")[1:]
         if len(rows) == 0:
@@ -46,12 +46,12 @@ class DoubanCrawlerViaHTML(DoubanCrawlerBase):
 
         for row in rows:
             post_title = row.select_one("td:nth-of-type(1) a")["title"]
-            post_url = row.select_one("td:nth-of-type(1) a")["href"]
+            post_url = row.select_one("td:nth-of-type(1) a")["href"].split("?")[0]
             author_url = row.select_one("td:nth-of-type(2) a")["href"]
             author_name = row.select_one("td:nth-of-type(2) a").text
-            response_count = int(row.select_one("td:nth-of-type(3)").text or 0)
+            response_count = int(row.select_one("td:nth-of-type(3)").text.strip() or 0)
 
-            datetime_str = row.select_one("td:nth-of-type(4)").text
+            datetime_str = row.select_one("td:nth-of-type(4)").text.strip()
             if not re.match("20", datetime_str):  # test if it'_s year of 20XX
                 datetime_str = f"{datetime.now().year}-{datetime_str}"
             response_latest_time = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")

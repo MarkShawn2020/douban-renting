@@ -3,9 +3,11 @@ import os
 API_KEY = '0df993c66c0c636e29ecbb5344252a4a'
 
 HEADERS_DICT = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.109 Safari/537.36",
-    "Cookie": os.environ["DOUBAN_COOKIE"]
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
 }
+# 小组讨论列表目前无需登录即可访问；被限流时可设置已登录 cookie
+if os.environ.get("DOUBAN_COOKIE"):
+    HEADERS_DICT["Cookie"] = os.environ["DOUBAN_COOKIE"]
 
 CRAWL_MAX_LIMIT = 100
 

@@ -74,6 +74,8 @@ if __name__ == '__main__':
                 city=args.city,
                 target_address=args.target_address,
                 max_duration=args.max_duration,
+                min_budget=int(args.min_budget),
+                max_budget=int(args.max_budget),
                 after_date=args.after_date,
                 include_only_from_personal=args.include_only_from_personal,
                 exclude_only_for_girls=args.exclude_only_for_girls,
