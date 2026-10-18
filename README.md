@@ -6,7 +6,7 @@
 
 ## 安装
 
-1. 到 [Releases](https://github.com/MarkShawn2020/douban-renting/releases/latest) 下载 `chrome-douban-renting-v*.zip`，解压
+1. 在 [Lovstudio.AI 官网](https://lovstudio.ai/app/douban-renting) 下载区下载 `chrome-douban-renting-v*.zip`（国内走高速镜像），或到 [GitHub Releases](https://github.com/MarkShawn2020/douban-renting/releases/latest) 下载，解压
 2. Chrome 打开 `chrome://extensions`，开启右上角的「开发者模式」
 3. 点击「加载已解压的扩展程序」，选择解压出的文件夹
 4. 打开任意豆瓣租房小组的讨论列表（例如「北京租房」），表格上方出现「租房筛选」面板即安装成功
