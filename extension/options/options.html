@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>豆瓣租房助手</title>
+<link rel="stylesheet" href="options.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <img src="logo.svg" alt="手工川">
+    <span class="tag">Lovstudio.AI 小工具</span>
+  </header>
+
+  <section class="hero">
+    <h1>豆瓣租房助手</h1>
+    <p>在豆瓣小组的讨论列表里直接筛选、标记租房帖。这里管理你的标记，以及按通勤筛选所需的设置。</p>
+  </section>
+
+  <section class="card">
+    <h2>通勤设置</h2>
+    <p class="hint">填好后，讨论列表可以按「到工作地点的公交时间」筛选。Key 只保存在本机浏览器，只会发给高德接口。</p>
+    <form id="settings" autocomplete="off">
+      <div class="grid">
+        <label class="field wide">
+          <span class="lbl">高德 Web 服务 Key</span>
+          <span class="inline">
+            <input type="password" id="gaodeKey" required spellcheck="false">
+            <button type="button" id="toggleKey">显示</button>
+          </span>
+        </label>
+        <label class="field">
+          <span class="lbl">城市</span>
+          <input type="text" id="city" required maxlength="20">
+        </label>
+        <label class="field wide">
+          <span class="lbl">工作地点</span>
+          <input type="text" id="targetQuery" required maxlength="60" placeholder="如：国贸、望京SOHO、西二旗地铁站">
+        </label>
+      </div>
+      <div class="actions">
+        <button type="submit" class="primary" id="saveSettings">保存并定位</button>
+        <button type="button" id="clearSettings">清除</button>
+        <span class="status" id="settingsStatus"></span>
+      </div>
+    </form>
+    <details class="help">
+      <summary>没有高德 Key？</summary>
+      <p>登录 <a href="https://console.amap.com/dev/key/app" target="_blank" rel="noopener noreferrer">高德开放平台控制台</a>，创建应用后添加 Key，服务平台选择「Web 服务」。个人开发者的免费额度足够日常找房使用；同一帖子的定位和通勤结果会缓存，不会重复消耗。</p>
+    </details>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>我的标记</h2>
+      <div class="tools">
+        <button type="button" id="export">导出</button>
+        <label class="button">导入<input type="file" id="import" accept="application/json" hidden></label>
+        <button type="button" id="clearSeen">清空已读记录</button>
+      </div>
+    </div>
+    <div class="filters">
+      <div class="tabs" id="tabs" role="tablist"></div>
+      <input type="search" id="search" placeholder="搜索标题或备注">
+    </div>
+    <p class="status" id="marksStatus"></p>
+    <ol class="marks" id="marks"></ol>
+  </section>
+
+  <footer>Lovstudio.AI · 手工川</footer>
+</div>
+<script src="../shared/rules.js"></script>
+<script src="../shared/storage.js"></script>
+<script src="options.js"></script>
+</body>
+</html>

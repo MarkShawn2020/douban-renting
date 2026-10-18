@@ -1,0 +1,55 @@
+:root {
+  --drh-primary: #CC785C;
+  --drh-foreground: #181818;
+  --drh-muted-foreground: #87867F;
+  --drh-border: #E8E6DC;
+  --drh-card: #FFFFFF;
+  --drh-like: #FBF1EC;
+  --drh-contacted: #F5F0E1;
+  --drh-visited: #EEF2E6;
+  --drh-rejected: #87867F;
+  --drh-ok: #4F7A4A;
+}
+
+tr.drh-row.drh-hidden { display: none; }
+
+tr.drh-status-like > td { background: var(--drh-like); }
+tr.drh-status-contacted > td { background: var(--drh-contacted); }
+tr.drh-status-visited > td { background: var(--drh-visited); }
+tr.drh-status-rejected { opacity: .45; }
+tr.drh-seen a[href*="/group/topic/"] { color: var(--drh-muted-foreground); }
+
+.drh-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 10px;
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--drh-muted-foreground);
+}
+.drh-price { color: var(--drh-foreground); font-weight: 600; }
+.drh-price:empty, .drh-commute:empty { display: none; }
+.drh-commute-ok { color: var(--drh-ok); font-weight: 600; }
+.drh-commute-unknown { font-style: italic; }
+
+.drh-tools { display: inline-flex; gap: 4px; }
+.drh-tools button {
+  font: inherit;
+  font-size: 11px;
+  line-height: 16px;
+  padding: 0 6px;
+  border: 1px solid var(--drh-border);
+  border-radius: 9px;
+  background: var(--drh-card);
+  color: var(--drh-muted-foreground);
+  cursor: pointer;
+}
+/* 未悬停时只露出已选状态，未选的按钮不占位；触屏设备没有悬停，始终全部显示 */
+@media (hover: hover) {
+  tr.drh-row:not(:hover):not(:focus-within) .drh-tools button:not(.drh-active) { display: none; }
+}
+.drh-tools button:hover { border-color: var(--drh-primary); color: var(--drh-primary); }
+.drh-tools button.drh-active { background: var(--drh-primary); border-color: var(--drh-primary); color: var(--drh-card); }
+.drh-tools button.drh-active[data-status="rejected"] { background: var(--drh-rejected); border-color: var(--drh-rejected); }
