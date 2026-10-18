@@ -6,7 +6,7 @@
 
 ## 安装
 
-1. 到 [Releases](https://github.com/MarkShawn2020/douban-renting/releases/latest) 下载 `douban-renting-extension-v*.zip`，解压
+1. 到 [Releases](https://github.com/MarkShawn2020/douban-renting/releases/latest) 下载 `chrome-douban-renting-v*.zip`，解压
 2. Chrome 打开 `chrome://extensions`，开启右上角的「开发者模式」
 3. 点击「加载已解压的扩展程序」，选择解压出的文件夹
 4. 打开任意豆瓣租房小组的讨论列表（例如「北京租房」），表格上方出现「租房筛选」面板即安装成功
@@ -43,10 +43,10 @@ python3 -m playwright install chromium
 python3 tests/extension/e2e.py [截图目录]
 ```
 
-打包发布：
+打包发布（文件名需以 `chrome` 开头、`.zip` 结尾，官网下载区才能识别）：
 
 ```shell
-cd extension && zip -r ../douban-renting-extension-v$(jq -r .version manifest.json).zip . -x '.*'
+cd extension && zip -r ../chrome-douban-renting-v$(jq -r .version manifest.json).zip . -x '.*'
 ```
 
 ---
